@@ -1,0 +1,7 @@
+name: aws_signer_v4.cr
+version: 0.1.0
+
+authors:
+  - Daisuke Fujita <dtanshi45@gmail.com>
+
+license: MIT
