@@ -8,5 +8,8 @@ development_dependencies:
   minitest:
     github: ysbaddaden/minitest.cr
     version: ~> 0.2.0
+  power_assert:
+    github: rosylilly/power_assert.cr
+    version: ~> 0.2.2
 
 license: MIT

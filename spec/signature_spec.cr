@@ -45,13 +45,13 @@ describe AwsSignerV4::Signature do
 
       it "should not be assigned" do
         assert signature.headers["x-amz-date"].is_a?(String)
-        assert_equal Time.new(2015, 12, 15, 16, 42, 27, 0, Time::Kind::Utc), signature.date
+        assert Time.new(2015, 12, 15, 16, 42, 27, 0, Time::Kind::Utc) == signature.date
       end
     end
 
     describe "without host" do
       it "should be assigned" do
-        assert_equal "example.org", signature.headers["Host"]
+        assert "example.org" == signature.headers["Host"]
       end
     end
 
@@ -61,7 +61,7 @@ describe AwsSignerV4::Signature do
       end
 
       it "should not be assigned" do
-        assert_equal "example.com", signature.headers["Host"]
+        assert "example.com" == signature.headers["Host"]
       end
     end
 
@@ -73,7 +73,7 @@ describe AwsSignerV4::Signature do
       end
 
       it "should be assigned as x-amz-security-token" do
-        assert_equal security_token, signature.headers["x-amz-security-token"]
+        assert security_token == signature.headers["x-amz-security-token"]
       end
     end
   end
