@@ -37,5 +37,16 @@ describe AwsSignerV4::Signature do
         assert signature.headers["x-amz-date"].is_a?(String)
       end
     end
+
+    describe "with x-amz-date" do
+      let(:headers) do
+        { "x-amz-date" => "20151215T164227Z" } of String => String?
+      end
+
+      it "should not be assigned" do
+        assert signature.headers["x-amz-date"].is_a?(String)
+        assert_equal Time.new(2015, 12, 15, 16, 42, 27, 0, Time::Kind::Utc), signature.date
+      end
+    end
   end
 end
