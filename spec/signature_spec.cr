@@ -100,6 +100,14 @@ EXPECTED
     end
   end
 
+  describe "hashed_payload" do
+    let(:body) { "body" }
+
+    it "should return hashed payload" do
+      assert "230d8358dc8e8890b4c58deeb62912ee2f20357ae92a5cc861b98e68fe31acb5" == signature.hashed_payload
+    end
+  end
+
   describe "scope" do
     before do
       headers["x-amz-date"] = "20140222T070605Z"
