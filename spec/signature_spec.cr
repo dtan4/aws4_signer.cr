@@ -143,4 +143,25 @@ EXPECTED
       assert "20140222/ap-northeast-1/service/aws4_request" == signature.scope
     end
   end
+
+  describe "signed_headers" do
+    let(:headers) do
+      {
+        "x-test-b" => "2",
+        "X-Test-A" => "1",
+        "x-test-c" => "3",
+        "Authorization" => "skip",
+      } of String => String?
+    end
+
+    it "should contain headers" do
+      %w(x-test-a x-test-b x-test-c).each do |name|
+        assert signature.signed_headers.to_s.split(';').includes?(name)
+      end
+    end
+
+    it "should sort headers" do
+      assert "host;x-amz-date;x-test-a;x-test-b;x-test-c" == signature.signed_headers
+    end
+  end
 end
