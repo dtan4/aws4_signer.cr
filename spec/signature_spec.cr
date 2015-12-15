@@ -78,6 +78,32 @@ describe AwsSignerV4::Signature do
     end
   end
 
+  describe "canonical_headers" do
+    let(:headers) do
+      {
+        "x-test-b" => "2",
+        "X-Test-A" => "1",
+        "x-test-c" => "3",
+        "Authorization" => "skip",
+      } of String => String?
+    end
+
+    it "should end with return" do
+      assert '\n' == signature.canonical_headers.to_s[-1]
+    end
+
+    it "should contain headers" do
+      assert signature.canonical_headers.to_s.lines.includes?("x-test-b:2\n")
+      assert signature.canonical_headers.to_s.lines.includes?("x-test-a:1\n") # downcase
+      assert signature.canonical_headers.to_s.lines.includes?("x-test-c:3\n")
+      assert !signature.canonical_headers.to_s.lines.includes?("Authorization:skip\n")
+    end
+
+    it "should sort headers" do
+      assert %w(host x-amz-date x-test-a x-test-b x-test-c) ==
+              signature.canonical_headers.to_s.lines.map { |line| line.split(/:/,2).first }
+    end
+  end
 
   describe "canonical_request" do
     before do
