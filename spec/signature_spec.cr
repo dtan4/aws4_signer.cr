@@ -3,32 +3,38 @@ require "./spec_helper"
 require "uri"
 
 describe AwsSignerV4::Signature do
-  access_key_id = "ACCESSKEYID"
-  secret_access_key = "SECRETACCESSKEY"
-  region = "ap-northeast-1"
-  service = "service"
-  uri = URI.parse("https://example.org/foo/bar?baz=blah")
-  verb = "PUT"
-  headers = { "x-foo" => "bar" } of String => String?
-  body = "body"
-  options = {} of String => String?
+  let(:access_key_id) { "ACCESSKEYID" }
+  let(:secret_access_key) { "SECRETACCESSKEY" }
+  let(:region) { "ap-northeast-1" }
+  let(:service) { "service" }
+  let(:uri) { URI.parse("https://example.org/foo/bar?baz=blah") }
+  let(:verb) { "PUT" }
+  let(:headers) do
+    { "x-foo" => "bar" } of String => String?
+  end
+  let(:body) { "body" }
+  let(:options) do
+    {} of String => String?
+  end
 
-  signature = AwsSignerV4::Signature.new(
-    access_key_id,
-    secret_access_key,
-    region,
-    service,
-    uri,
-    verb,
-    headers,
-    body,
-    options
-  )
+  let(:signature) do
+    AwsSignerV4::Signature.new(
+      access_key_id,
+      secret_access_key,
+      region,
+      service,
+      uri,
+      verb,
+      headers,
+      body,
+      options
+    )
+  end
 
-  describe "#headers" do
-    context "without x-amz-date" do
+  describe "headers" do
+    describe "without x-amz-date" do
       it "should be assigned" do
-        signature.headers["x-amz-date"].is_a?(String).should eq true
+        assert signature.headers["x-amz-date"].is_a?(String)
       end
     end
   end

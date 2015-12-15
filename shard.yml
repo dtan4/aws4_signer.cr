@@ -4,4 +4,9 @@ version: 0.1.0
 authors:
   - Daisuke Fujita <dtanshi45@gmail.com>
 
+development_dependencies:
+  minitest:
+    github: ysbaddaden/minitest.cr
+    version: ~> 0.2.0
+
 license: MIT
