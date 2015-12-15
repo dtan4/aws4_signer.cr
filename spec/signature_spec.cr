@@ -3,16 +3,16 @@ require "./spec_helper"
 require "uri"
 
 describe AwsSignerV4::Signature do
-  let(:access_key_id) { "ACCESSKEYID" }
-  let(:secret_access_key) { "SECRETACCESSKEY" }
-  let(:region) { "ap-northeast-1" }
-  let(:service) { "service" }
+  let(:access_key_id) { "AKID" }
+  let(:secret_access_key) { "SECRET" }
+  let(:region) { "xx-region-1" }
+  let(:service) { "svc" }
   let(:uri) { URI.parse("https://example.org/foo/bar?baz=blah") }
   let(:verb) { "PUT" }
   let(:headers) do
     { "x-foo" => "bar" } of String => String?
   end
-  let(:body) { "body" }
+  let(:body) { "hello" }
   let(:options) do
     {} of Symbol => String?
   end
@@ -120,7 +120,7 @@ x-amz-date:20140222T070605Z
 x-foo:bar
 
 host;x-amz-date;x-foo
-230d8358dc8e8890b4c58deeb62912ee2f20357ae92a5cc861b98e68fe31acb5
+2cf24dba5fb0a30e26e83b2ac5b9e29e1b161e5c1fa7425e73043362938b9824
 EXPECTED
       assert_equal expected.chomp, signature.canonical_request
     end
@@ -140,7 +140,7 @@ EXPECTED
     end
 
     it "should return scope" do
-      assert "20140222/ap-northeast-1/service/aws4_request" == signature.scope
+      assert "20140222/xx-region-1/svc/aws4_request" == signature.scope
     end
   end
 
@@ -174,10 +174,10 @@ EXPECTED
       expected = <<-EXPECTED
 AWS4-HMAC-SHA256
 20140222T070605Z
-20140222/ap-northeast-1/service/aws4_request
-8fa97ec117010b23dbce4c1cf9177812c30aa71a0d84efe6ed97e73c0f79844b
+20140222/xx-region-1/svc/aws4_request
+001733369d0e1b78643ae4a5c5a71afd8bf01e868a0835868b0b01a2c14ff3b2
 EXPECTED
-      assert expected.chomp == signature.string_to_sign
+      assert_equal expected.chomp, signature.string_to_sign
     end
   end
 end
