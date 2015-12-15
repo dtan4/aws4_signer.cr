@@ -21,6 +21,8 @@ class AwsSignerV4
         @date = date_now
         @headers["x-amz-date"] = date_now.to_s(X_AMZ_DATE_FORMAT)
       end
+
+      @headers["Host"] ||= @headers.delete("host") || uri.host
     end
 
     getter :region, :service, :verb, :uri, :headers, :body, :access_key_id, :secret_access_key
