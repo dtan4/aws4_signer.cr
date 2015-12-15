@@ -77,4 +77,14 @@ describe AwsSignerV4::Signature do
       end
     end
   end
+
+  describe "scope" do
+    before do
+      headers["x-amz-date"] = "20140222T070605Z"
+    end
+
+    it "should return scope" do
+      assert "20140222/ap-northeast-1/service/aws4_request" == signature.scope
+    end
+  end
 end

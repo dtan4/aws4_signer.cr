@@ -30,8 +30,11 @@ class AwsSignerV4
 
     def date
       # TODO(dtan4): Does it really need to call #to_s?
-      @date = Time.parse(@headers["x-amz-date"].to_s, X_AMZ_DATE_FORMAT, Time::Kind::Utc) unless @date
-      @date
+      @date ||= Time.parse(@headers["x-amz-date"].to_s, X_AMZ_DATE_FORMAT, Time::Kind::Utc)
+    end
+
+    def scope
+      "#{date.to_s("%Y%m%d")}/#{@region}/#{@service}/aws4_request"
     end
   end
 end
