@@ -23,6 +23,7 @@ class AwsSignerV4
       end
 
       @headers["Host"] ||= @headers.delete("host") || uri.host
+      @headers["x-amz-security-token"] = options[:security_token] if options.has_key?(:security_token) && options[:security_token]
     end
 
     getter :region, :service, :verb, :uri, :headers, :body, :access_key_id, :secret_access_key

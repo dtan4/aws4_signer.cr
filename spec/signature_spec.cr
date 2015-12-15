@@ -14,7 +14,7 @@ describe AwsSignerV4::Signature do
   end
   let(:body) { "body" }
   let(:options) do
-    {} of String => String?
+    {} of Symbol => String?
   end
 
   let(:signature) do
@@ -62,6 +62,18 @@ describe AwsSignerV4::Signature do
 
       it "should not be assigned" do
         assert_equal "example.com", signature.headers["Host"]
+      end
+    end
+
+    describe "with security token" do
+      let(:security_token) { "session_token" }
+
+      let(:options) do
+        { security_token: security_token }
+      end
+
+      it "should be assigned as x-amz-security-token" do
+        assert_equal security_token, signature.headers["x-amz-security-token"]
       end
     end
   end
