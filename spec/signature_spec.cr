@@ -78,6 +78,28 @@ describe AwsSignerV4::Signature do
     end
   end
 
+
+  describe "canonical_request" do
+    before do
+      headers["x-amz-date"] = "20140222T070605Z"
+    end
+
+    it "should return string to sign" do
+      expected = <<-EXPECTED
+PUT
+/foo/bar
+baz=blah
+host:example.org
+x-amz-date:20140222T070605Z
+x-foo:bar
+
+host;x-amz-date;x-foo
+230d8358dc8e8890b4c58deeb62912ee2f20357ae92a5cc861b98e68fe31acb5
+EXPECTED
+      assert_equal expected.chomp, signature.canonical_request
+    end
+  end
+
   describe "scope" do
     before do
       headers["x-amz-date"] = "20140222T070605Z"

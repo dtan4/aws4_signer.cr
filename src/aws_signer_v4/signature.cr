@@ -1,3 +1,7 @@
+require "openssl"
+require "openssl/digest"
+require "openssl/hmac"
+
 class AwsSignerV4
   class Signature
     X_AMZ_DATE_FORMAT = "%Y%m%dT%H%M%SZ"
@@ -28,13 +32,63 @@ class AwsSignerV4
 
     getter :region, :service, :verb, :uri, :headers, :body, :access_key_id, :secret_access_key
 
+    def canonical_headers
+      return @canonical_headers if @canonical_headers
+
+      signed = [] of String
+
+      hash = @headers.to_a.sort_by { |header| header[0].downcase }.map do |header|
+        name, value = header[0], header[1]
+
+        next if name == "Authorization"
+
+        signed << name.downcase
+
+        if value.is_a?(Array)
+          value.map { |v| "#{name.downcase}:#{v.to_s.strip}\n" }
+        else
+          "#{name.downcase}:#{value.to_s.strip}\n"
+        end
+      end.compact.join
+
+      @signed_headers = signed.join(";")
+      @canonical_headers = hash
+      hash
+    end
+
+    def canonical_request
+      @canonical_request ||= [
+        @verb.upcase,
+        @uri.path,
+        @uri.query,
+        canonical_headers,
+        signed_headers,
+        hashed_payload,
+      ].join("\n")
+    end
+
     def date
       # TODO(dtan4): Does it really need to call #to_s?
       @date ||= Time.parse(@headers["x-amz-date"].to_s, X_AMZ_DATE_FORMAT, Time::Kind::Utc)
     end
 
+    def hashed_payload
+      @hashed_payload ||= sha256_digest(body)
+    end
+
     def scope
       "#{date.to_s("%Y%m%d")}/#{@region}/#{@service}/aws4_request"
+    end
+
+    def sha256_digest(data)
+      digest = OpenSSL::Digest.new("SHA256")
+      digest << data
+      digest.hexdigest
+    end
+
+    def signed_headers
+      canonical_headers
+      @signed_headers
     end
   end
 end
