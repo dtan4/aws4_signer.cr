@@ -90,5 +90,14 @@ class AwsSignerV4
       canonical_headers
       @signed_headers
     end
+
+    def string_to_sign
+      @string_to_sign = [
+        "AWS4-HMAC-SHA256",
+        @headers["x-amz-date"],
+        scope,
+        sha256_digest(canonical_request),
+      ].join("\n")
+    end
   end
 end

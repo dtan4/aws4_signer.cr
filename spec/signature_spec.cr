@@ -164,4 +164,20 @@ EXPECTED
       assert "host;x-amz-date;x-test-a;x-test-b;x-test-c" == signature.signed_headers
     end
   end
+
+  describe "string_to_sign" do
+    before do
+      headers["x-amz-date"] = "20140222T070605Z"
+    end
+
+    it "should return string to sign" do
+      expected = <<-EXPECTED
+AWS4-HMAC-SHA256
+20140222T070605Z
+20140222/ap-northeast-1/service/aws4_request
+8fa97ec117010b23dbce4c1cf9177812c30aa71a0d84efe6ed97e73c0f79844b
+EXPECTED
+      assert expected.chomp == signature.string_to_sign
+    end
+  end
 end
