@@ -32,6 +32,13 @@ class AwsSignerV4
 
     getter :region, :service, :verb, :uri, :headers, :body, :access_key_id, :secret_access_key
 
+    def authorization_header
+      "AWS4-HMAC-SHA256 " \
+        "Credential=#{@access_key_id}/#{scope}," \
+        "SignedHeaders=#{signed_headers}," \
+        "Signature=#{signature}"
+    end
+
     def canonical_headers
       return @canonical_headers if @canonical_headers
 

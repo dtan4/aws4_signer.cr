@@ -78,6 +78,20 @@ describe AwsSignerV4::Signature do
     end
   end
 
+  describe "authorization_header" do
+    before do
+      headers["x-amz-date"] = "20140222T070605Z"
+    end
+
+    it "should return authorization_header" do
+      assert_equal "AWS4-HMAC-SHA256 "\
+        "Credential=AKID/20140222/xx-region-1/svc/aws4_request," \
+        "SignedHeaders=host;x-amz-date;x-foo," \
+        "Signature=2845eebf2510f52010a9d9e228d4b60d4dd33fb7e9f349fb21bd6a533bfc37b6",
+        signature.authorization_header
+    end
+  end
+
   describe "canonical_headers" do
     let(:headers) do
       {
