@@ -72,6 +72,18 @@ class AwsSignerV4
       @date ||= Time.parse(@headers["x-amz-date"].to_s, X_AMZ_DATE_FORMAT, Time::Kind::Utc)
     end
 
+    def date_key
+      @date_key ||= hmac("AWS4#{@secret_access_key}", date.to_s("%Y%m%d"))
+    end
+
+    def date_region_key
+      @date_region_key ||= hmac(date_key, @region)
+    end
+
+    def date_region_service_key
+      @date_region_service_key ||= hmac(date_region_key, @service)
+    end
+
     def hashed_payload
       @hashed_payload ||= sha256_digest(body)
     end
@@ -86,9 +98,17 @@ class AwsSignerV4
       digest.hexdigest
     end
 
+    def signature
+      @signature ||= hmac(signing_key, string_to_sign, :hex)
+    end
+
     def signed_headers
       canonical_headers
       @signed_headers
+    end
+
+    def signing_key
+      @signing_key ||= hmac(date_region_service_key, "aws4_request")
     end
 
     def string_to_sign
@@ -98,6 +118,10 @@ class AwsSignerV4
         scope,
         sha256_digest(canonical_request),
       ].join("\n")
+    end
+
+    private def hmac(key, data, hex = false)
+      hex ? OpenSSL::HMAC.hexdigest(:sha256, key, data) : OpenSSL::HMAC.digest(:sha256, key, data)
     end
   end
 end

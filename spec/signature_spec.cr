@@ -144,6 +144,16 @@ EXPECTED
     end
   end
 
+  describe "signature" do
+    before do
+      headers["x-amz-date"] = "20140222T070605Z"
+    end
+
+    it "return the sign" do
+      assert_equal "2845eebf2510f52010a9d9e228d4b60d4dd33fb7e9f349fb21bd6a533bfc37b6", signature.signature
+    end
+  end
+
   describe "signed_headers" do
     let(:headers) do
       {
