@@ -7,7 +7,8 @@ class Aws4Signer
   class Signature
     X_AMZ_DATE_FORMAT = "%Y%m%dT%H%M%SZ"
 
-    def initialize(access_key_id, secret_access_key, region, service, uri, verb, headers : HTTP::Headers, body, options)
+    def initialize(access_key_id, secret_access_key, region, service,
+                    uri : URI, verb, headers : HTTP::Headers, body, options : Hash(Symbol, String?))
       @access_key_id = access_key_id
       @secret_access_key = secret_access_key
       @region = region

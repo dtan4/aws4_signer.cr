@@ -9,12 +9,11 @@ class Aws4Signer
     @options = options
   end
 
-  def sign(verb, uri, headers, body) : Signature
-    raise "URI must be provided" unless uri
+  def sign(verb, uri : URI, headers : HTTP::Headers, body) : Signature
     Signature.new(@access_key_id, @secret_access_key, @region, @service, uri, verb, headers, body, @options)
   end
 
-  def sign_headers(verb, uri, headers = HTTP::Request.new, body = "") : HTTP::Headers
+  def sign_headers(verb, uri, headers = HTTP::Headers.new, body = "") : HTTP::Headers
     sign(verb, uri, headers, body).generate_signed_headers
   end
 end
