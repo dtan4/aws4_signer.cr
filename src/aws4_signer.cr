@@ -14,7 +14,7 @@ class Aws4Signer
     Signature.new(@access_key_id, @secret_access_key, @region, @service, uri, verb, headers, body, @options)
   end
 
-  def sign_http_request(verb, uri, headers = HTTP::Request.new, body = "") : HTTP::Headers
+  def sign_headers(verb, uri, headers = HTTP::Request.new, body = "") : HTTP::Headers
     sign(verb, uri, headers, body).generate_signed_headers
   end
 end

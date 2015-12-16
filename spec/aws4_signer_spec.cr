@@ -39,11 +39,11 @@ describe Aws4Signer do
     end
   end
 
-  describe "sign_http_request" do
+  describe "sign_headers" do
     let(:uri) { URI.parse("https://example.org/foo/bar?baz=blah") }
 
     it "should return signed headers" do
-      headers = signer.sign_http_request("PUT", uri, headers, "hello")
+      headers = signer.sign_headers("PUT", uri, headers, "hello")
 
       %w(authorization x-amz-content-sha256).each do |name|
         assert headers.has_key?(name)
