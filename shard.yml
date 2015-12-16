@@ -1,4 +1,4 @@
-name: aws_signer_v4.cr
+name: aws4_signer
 version: 0.1.0
 
 authors:
