@@ -1,14 +1,21 @@
 require "./spec_helper"
 
+require "http/headers"
+
 describe AwsSignerV4 do
   let(:signer) { AwsSignerV4.new("AKID", "SECRET", "xx-region-1", "svc", {} of Symbol => String?) }
+  let(:headers) do
+    h = HTTP::Headers.new
+    h["foo"] = "bar"
+    h
+  end
 
   describe "sign" do
     describe "without uri" do
       let(:uri) { nil }
 
       it "should raise ArgumentError" do
-        ex = assert_raises { signer.sign("put", uri, { "foo" => "bar" }, "hello") }
+        ex = assert_raises { signer.sign("put", uri, headers, "hello") }
         assert_equal "URI must be provided", ex.message
       end
     end
@@ -17,7 +24,7 @@ describe AwsSignerV4 do
       let(:uri) { URI.parse("https://example.org/foo/bar?baz=blah") }
 
       it "should return Signature" do
-        signature = signer.sign("PUT", uri, { "foo" => "bar" } of String => String?, "hello")
+        signature = signer.sign("PUT", uri, headers, "hello")
 
         assert signature.is_a?(AwsSignerV4::Signature)
         assert_equal "AKID", signature.access_key_id
@@ -36,7 +43,7 @@ describe AwsSignerV4 do
     let(:uri) { URI.parse("https://example.org/foo/bar?baz=blah") }
 
     it "should return signed headers" do
-      headers = signer.sign_http_request("PUT", uri, { "foo" => "bar" } of String => String?, "hello")
+      headers = signer.sign_http_request("PUT", uri, headers, "hello")
 
       %w(authorization x-amz-content-sha256).each do |name|
         assert headers.has_key?(name)

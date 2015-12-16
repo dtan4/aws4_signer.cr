@@ -1,5 +1,6 @@
 require "./spec_helper"
 
+require "http/headers"
 require "uri"
 
 describe AwsSignerV4::Signature do
@@ -10,7 +11,9 @@ describe AwsSignerV4::Signature do
   let(:uri) { URI.parse("https://example.org/foo/bar?baz=blah") }
   let(:verb) { "PUT" }
   let(:headers) do
-    { "x-foo" => "bar" } of String => String?
+    h = HTTP::Headers.new
+    h["x-foo"] = "bar"
+    h
   end
   let(:body) { "hello" }
   let(:options) do
@@ -39,8 +42,9 @@ describe AwsSignerV4::Signature do
     end
 
     describe "with x-amz-date" do
-      let(:headers) do
-        { "x-amz-date" => "20151215T164227Z" } of String => String?
+
+      before do
+        headers["x-amz-date"] = "20151215T164227Z"
       end
 
       it "should not be assigned" do
@@ -56,8 +60,8 @@ describe AwsSignerV4::Signature do
     end
 
     describe "with host" do
-      let(:headers) do
-        { "host" => "example.com" } of String => String?
+      before do
+        headers["host"] = "example.com"
       end
 
       it "should not be assigned" do
@@ -94,12 +98,12 @@ describe AwsSignerV4::Signature do
 
   describe "canonical_headers" do
     let(:headers) do
-      {
-        "x-test-b" => "2",
-        "X-Test-A" => "1",
-        "x-test-c" => "3",
-        "Authorization" => "skip",
-      } of String => String?
+      h = HTTP::Headers.new
+      h["x-test-b"] = "2"
+      h["X-Test-A"] = "1"
+      h["x-test-c"] = "3"
+      h["Authorization"] = "skip"
+      h
     end
 
     it "should end with return" do
@@ -164,6 +168,26 @@ EXPECTED
     end
   end
 
+  describe "headers_hash" do
+    let(:headers) do
+      h = HTTP::Headers.new
+      h["x-test-b"] = "2"
+      h["X-Test-A"] = "1"
+      h["x-test-c"] = "3"
+      h["Authorization"] = "skip"
+      h
+    end
+
+    it "should return Hash of headers" do
+      headers_hash = signature.headers_hash
+
+      assert_equal "2", headers_hash["x-test-b"]
+      assert_equal "1", headers_hash["X-Test-A"]
+      assert_equal "3", headers_hash["x-test-c"]
+      assert_equal "skip", headers_hash["Authorization"]
+    end
+  end
+
   describe "scope" do
     before do
      headers["x-amz-date"] = "20140222T070605Z"
@@ -186,12 +210,12 @@ EXPECTED
 
   describe "signed_headers" do
     let(:headers) do
-      {
-        "x-test-b" => "2",
-        "X-Test-A" => "1",
-        "x-test-c" => "3",
-        "Authorization" => "skip",
-      } of String => String?
+      h = HTTP::Headers.new
+      h["x-test-b"] = "2"
+      h["X-Test-A"] = "1"
+      h["x-test-c"] = "3"
+      h["Authorization"] = "skip"
+      h
     end
 
     it "should contain headers" do

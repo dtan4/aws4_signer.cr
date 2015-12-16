@@ -1,3 +1,4 @@
+require "http/headers"
 require "openssl"
 require "openssl/digest"
 require "openssl/hmac"
@@ -6,7 +7,7 @@ class AwsSignerV4
   class Signature
     X_AMZ_DATE_FORMAT = "%Y%m%dT%H%M%SZ"
 
-    def initialize(access_key_id, secret_access_key, region, service, uri, verb, headers, body, options)
+    def initialize(access_key_id, secret_access_key, region, service, uri, verb, headers : HTTP::Headers, body, options)
       @access_key_id = access_key_id
       @secret_access_key = secret_access_key
       @region = region
@@ -17,16 +18,19 @@ class AwsSignerV4
       @body = body
       @options = options
 
-      @headers["x-amz-date"] ||= @headers.delete("X-Amz-Date")
-
-      unless @headers["x-amz-date"]
-        # TODO(dtan4): Does it really need to assign date_now?
-        date_now = Time.utc_now
-        @date = date_now
-        @headers["x-amz-date"] = date_now.to_s(X_AMZ_DATE_FORMAT)
+      unless @headers.has_key?("x-amz-date")
+        if @headers.has_key?("X-Amz-Date")
+          @headers["x-amz-date"] = @headers["X-Amz-Date"]
+          @headers.delete("X-Amz-Date")
+        else
+          # TODO(dtan4): Does it really need to assign date_now?
+          date_now = Time.utc_now
+          @date = date_now
+          @headers["x-amz-date"] = date_now.to_s(X_AMZ_DATE_FORMAT)
+        end
       end
 
-      @headers["Host"] ||= @headers.delete("host") || uri.host
+      @headers["Host"] ||= @headers.delete("host") || uri.host || ""
       @headers["x-amz-security-token"] = options[:security_token] if options.has_key?(:security_token) && options[:security_token]
     end
 
@@ -44,7 +48,7 @@ class AwsSignerV4
 
       signed = [] of String
 
-      hash = @headers.to_a.sort_by { |header| header[0].downcase }.map do |header|
+      hash = headers_hash.to_a.sort_by { |header| header[0].downcase }.map do |header|
         name, value = header[0], header[1]
 
         next if name == "Authorization"
@@ -93,7 +97,7 @@ class AwsSignerV4
 
     def generate_signed_headers
       signed_headers = {} of String => String?
-      @headers.each { |name, value| signed_headers[name.downcase] = value }
+      @headers.each { |name, value| signed_headers[name.downcase] = value.join }
       signed_headers["x-amz-content-sha256"] = sha256_digest(@body)
       signed_headers["authorization"] = authorization_header
       signed_headers
@@ -101,6 +105,13 @@ class AwsSignerV4
 
     def hashed_payload
       @hashed_payload ||= sha256_digest(body)
+    end
+
+    def headers_hash
+      # TODO(dtan4): memorize
+      hash = {} of String => String
+      @headers.each { |name, value| hash[name] = value.join }
+      hash
     end
 
     def scope
