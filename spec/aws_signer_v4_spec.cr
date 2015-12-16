@@ -31,4 +31,17 @@ describe AwsSignerV4 do
       end
     end
   end
+
+  describe "sign_http_request" do
+    let(:uri) { URI.parse("https://example.org/foo/bar?baz=blah") }
+
+    it "should return signed headers" do
+      headers = signer.sign_http_request("PUT", uri, { "foo" => "bar" } of String => String?, "hello")
+
+      %w(authorization x-amz-content-sha256).each do |name|
+        assert headers.has_key?(name)
+        assert headers[name].is_a?(String)
+      end
+    end
+  end
 end
