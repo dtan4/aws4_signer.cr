@@ -140,6 +140,22 @@ EXPECTED
     end
   end
 
+  describe "generate_signed_headers" do
+    before do
+      headers["x-amz-date"] = "20140222T070605Z"
+    end
+
+    it "should generate signed headers" do
+      signed_headers = signature.generate_signed_headers
+
+      assert_equal "example.org",  signed_headers["host"]
+      assert_equal "20140222T070605Z",signed_headers["x-amz-date"]
+      assert_equal "bar",signed_headers["x-foo"]
+      assert_equal signature.authorization_header,signed_headers["authorization"]
+      assert_equal "2cf24dba5fb0a30e26e83b2ac5b9e29e1b161e5c1fa7425e73043362938b9824", signed_headers["x-amz-content-sha256"]
+    end
+  end
+
   describe "hashed_payload" do
     let(:body) { "body" }
 
@@ -150,7 +166,7 @@ EXPECTED
 
   describe "scope" do
     before do
-      headers["x-amz-date"] = "20140222T070605Z"
+     headers["x-amz-date"] = "20140222T070605Z"
     end
 
     it "should return scope" do

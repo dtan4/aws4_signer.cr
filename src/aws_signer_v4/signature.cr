@@ -91,6 +91,14 @@ class AwsSignerV4
       @date_region_service_key ||= hmac(date_region_key, @service)
     end
 
+    def generate_signed_headers
+      signed_headers = {} of String => String?
+      @headers.each { |name, value| signed_headers[name.downcase] = value }
+      signed_headers["x-amz-content-sha256"] = sha256_digest(@body)
+      signed_headers["authorization"] = authorization_header
+      signed_headers
+    end
+
     def hashed_payload
       @hashed_payload ||= sha256_digest(body)
     end
