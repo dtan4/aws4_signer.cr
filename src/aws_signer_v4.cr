@@ -1,5 +1,16 @@
 require "./aws_signer_v4/*"
 
 class AwsSignerV4
-  # TODO Put your code here
+  def initialize(access_key_id, secret_access_key, region, service, options)
+    @access_key_id = access_key_id
+    @secret_access_key = secret_access_key
+    @region = region
+    @service = service
+    @options = options
+  end
+
+  def sign(verb, uri, headers, body)
+    raise "URI must be provided" unless uri
+    Signature.new(@access_key_id, @secret_access_key, @region, @service, uri, verb, headers, body, @options)
+  end
 end
