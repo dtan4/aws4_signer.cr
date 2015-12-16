@@ -95,8 +95,8 @@ class Aws4Signer
       @date_region_service_key ||= hmac(date_region_key, @service)
     end
 
-    def generate_signed_headers
-      signed_headers = {} of String => String?
+    def generate_signed_headers : HTTP::Headers
+      signed_headers = HTTP::Headers.new
       @headers.each { |name, value| signed_headers[name.downcase] = value.join }
       signed_headers["x-amz-content-sha256"] = sha256_digest(@body)
       signed_headers["authorization"] = authorization_header
@@ -107,7 +107,7 @@ class Aws4Signer
       @hashed_payload ||= sha256_digest(body)
     end
 
-    def headers_hash
+    def headers_hash : Hash(String, String)
       # TODO(dtan4): memorize
       hash = {} of String => String
       @headers.each { |name, value| hash[name] = value.join }
