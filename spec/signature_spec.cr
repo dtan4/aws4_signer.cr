@@ -45,13 +45,13 @@ describe AwsSignerV4::Signature do
 
       it "should not be assigned" do
         assert signature.headers["x-amz-date"].is_a?(String)
-        assert Time.new(2015, 12, 15, 16, 42, 27, 0, Time::Kind::Utc) == signature.date
+        assert_equal Time.new(2015, 12, 15, 16, 42, 27, 0, Time::Kind::Utc), signature.date
       end
     end
 
     describe "without host" do
       it "should be assigned" do
-        assert "example.org" == signature.headers["Host"]
+        assert_equal "example.org", signature.headers["Host"]
       end
     end
 
@@ -61,7 +61,7 @@ describe AwsSignerV4::Signature do
       end
 
       it "should not be assigned" do
-        assert "example.com" == signature.headers["Host"]
+        assert_equal "example.com", signature.headers["Host"]
       end
     end
 
@@ -73,7 +73,7 @@ describe AwsSignerV4::Signature do
       end
 
       it "should be assigned as x-amz-security-token" do
-        assert security_token == signature.headers["x-amz-security-token"]
+        assert_equal security_token, signature.headers["x-amz-security-token"]
       end
     end
   end
@@ -103,7 +103,7 @@ describe AwsSignerV4::Signature do
     end
 
     it "should end with return" do
-      assert '\n' == signature.canonical_headers.to_s[-1]
+      assert_equal '\n', signature.canonical_headers.to_s[-1]
     end
 
     it "should contain headers" do
@@ -114,7 +114,7 @@ describe AwsSignerV4::Signature do
     end
 
     it "should sort headers" do
-      assert %w(host x-amz-date x-test-a x-test-b x-test-c) ==
+      assert_equal %w(host x-amz-date x-test-a x-test-b x-test-c),
               signature.canonical_headers.to_s.lines.map { |line| line.split(/:/,2).first }
     end
   end
@@ -160,7 +160,7 @@ EXPECTED
     let(:body) { "body" }
 
     it "should return hashed payload" do
-      assert "230d8358dc8e8890b4c58deeb62912ee2f20357ae92a5cc861b98e68fe31acb5" == signature.hashed_payload
+      assert_equal "230d8358dc8e8890b4c58deeb62912ee2f20357ae92a5cc861b98e68fe31acb5", signature.hashed_payload
     end
   end
 
@@ -170,7 +170,7 @@ EXPECTED
     end
 
     it "should return scope" do
-      assert "20140222/xx-region-1/svc/aws4_request" == signature.scope
+      assert_equal "20140222/xx-region-1/svc/aws4_request", signature.scope
     end
   end
 
@@ -201,7 +201,7 @@ EXPECTED
     end
 
     it "should sort headers" do
-      assert "host;x-amz-date;x-test-a;x-test-b;x-test-c" == signature.signed_headers
+      assert_equal "host;x-amz-date;x-test-a;x-test-b;x-test-c", signature.signed_headers
     end
   end
 
