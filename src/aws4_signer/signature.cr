@@ -3,7 +3,7 @@ require "openssl"
 require "openssl/digest"
 require "openssl/hmac"
 
-class AwsSignerV4
+class Aws4Signer
   class Signature
     X_AMZ_DATE_FORMAT = "%Y%m%dT%H%M%SZ"
 

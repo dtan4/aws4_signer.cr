@@ -2,8 +2,8 @@ require "./spec_helper"
 
 require "http/headers"
 
-describe AwsSignerV4 do
-  let(:signer) { AwsSignerV4.new("AKID", "SECRET", "xx-region-1", "svc", {} of Symbol => String?) }
+describe Aws4Signer do
+  let(:signer) { Aws4Signer.new("AKID", "SECRET", "xx-region-1", "svc", {} of Symbol => String?) }
   let(:headers) do
     h = HTTP::Headers.new
     h["foo"] = "bar"
@@ -26,7 +26,7 @@ describe AwsSignerV4 do
       it "should return Signature" do
         signature = signer.sign("PUT", uri, headers, "hello")
 
-        assert signature.is_a?(AwsSignerV4::Signature)
+        assert signature.is_a?(Aws4Signer::Signature)
         assert_equal "AKID", signature.access_key_id
         assert_equal "SECRET", signature.secret_access_key
         assert_equal "xx-region-1", signature.region

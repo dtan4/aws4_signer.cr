@@ -1,6 +1,6 @@
 require "./aws_signer_v4/*"
 
-class AwsSignerV4
+class Aws4Signer
   def initialize(access_key_id, secret_access_key, region, service, options)
     @access_key_id = access_key_id
     @secret_access_key = secret_access_key

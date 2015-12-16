@@ -3,7 +3,7 @@ require "./spec_helper"
 require "http/headers"
 require "uri"
 
-describe AwsSignerV4::Signature do
+describe Aws4Signer::Signature do
   let(:access_key_id) { "AKID" }
   let(:secret_access_key) { "SECRET" }
   let(:region) { "xx-region-1" }
@@ -21,7 +21,7 @@ describe AwsSignerV4::Signature do
   end
 
   let(:signature) do
-    AwsSignerV4::Signature.new(
+    Aws4Signer::Signature.new(
       access_key_id,
       secret_access_key,
       region,
