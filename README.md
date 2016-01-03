@@ -34,7 +34,7 @@ signer = Aws4Signer.new(ENV["AWS_ACCESS_KEY_ID"], ENV["AWS_SECRET_ACCESS_KEY"], 
 uri = URI.parse("https://s3-ap-northeast-1.amazonaws.com/#{bucket}")
 
 HTTP::Client.new(uri.host.to_s) do |client|
-  headers = signer.sign_headers("GET", uri) ## ここでヘッダに認証情報を付与
+  headers = signer.sign_headers("GET", uri)
   response = client.get(uri.path.to_s, headers)
   puts response.body
 end
