@@ -21,7 +21,24 @@ dependencies:
 require "aws4_signer"
 ```
 
-TODO: Write usage instructions here
+### List objects in the specified S3 bucket
+
+``` crystal
+require "aws4_signer"
+require "http/client"
+require "uri"
+
+bucket = "your-bucket"
+
+signer = Aws4Signer.new(ENV["AWS_ACCESS_KEY_ID"], ENV["AWS_SECRET_ACCESS_KEY"], "ap-northeast-1", "s3")
+uri = URI.parse("https://s3-ap-northeast-1.amazonaws.com/#{bucket}")
+
+HTTP::Client.new(uri.host.to_s) do |client|
+  headers = signer.sign_headers("GET", uri) ## ここでヘッダに認証情報を付与
+  response = client.get(uri.path.to_s, headers)
+  puts response.body
+end
+```
 
 ## Contributing
 
