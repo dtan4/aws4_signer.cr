@@ -1,5 +1,7 @@
 # aws4_signer.cr
 [![Build Status](https://travis-ci.org/dtan4/aws4_signer.cr.svg?branch=master)](https://travis-ci.org/dtan4/aws4_signer.cr)
+[![Dependency Status](https://shards.rocks/badge/github/dtan4/aws4_signer.cr/status.svg)](https://shards.rocks/github/dtan4/aws4_signer.cr)
+[![devDependency Status](https://shards.rocks/badge/github/dtan4/aws4_signer.cr/dev_status.svg)](https://shards.rocks/github/dtan4/aws4_signer.cr)
 
 A simple library to sign AWS request using [AWS Signature Version 4](https://docs.aws.amazon.com/general/latest/gr/signature-version-4.html).
 
